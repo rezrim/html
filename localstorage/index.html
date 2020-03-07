@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Local Storage Implementasi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+ 
+            <div class="form-group">
+                <label for="namaLengkap">Nama Lengkap</label>
+                <input type="text" class="form-control" id="namaLengkap">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+            </div>
+
+            <div class="form-group">
+                <label for="noHP">Nomor Handphone</label>
+                <input type="text" class="form-control" id="noHP">
+            </div>
+
+            <div class="form-group">
+                <label for="alamat">Alamat</label>
+                <textarea class="form-control" id="alamat" rows="3"></textarea>
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="submit()">Submit</button>
+     
+
+        <table class="table mt-4" id="tableData">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nama Lengkap</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Nomor Handphone</th>
+                    <th scope="col">Alamat</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            getData();
+        })
+        function submit(){
+            let nama = document.getElementById("namaLengkap").value;
+            let email = document.getElementById("email").value;
+            let noHP = document.getElementById("noHP").value;
+            let alamat = document.getElementById("alamat").value;
+
+            let tableData = (document.getElementById("tableData").rows.length);
+
+            let tbody = document.getElementById("tableBody").innerHTML;
+            
+            if(tbody==null) tbody="";
+            html = tbody+"<tr id='row-"+tableData+"'><td>"+tableData+"</td><td>"+nama+"</td><td>"+email+"</td><td>"+noHP+"</td><td>"+alamat+"</td><td><button onclick='remove("+tableData+")' type='button'>X</button></td></tr>"
+
+            document.getElementById("tableBody").innerHTML = html;
+            
+            saveStorage(tableData,nama,email,noHP,alamat)
+        }
+
+        function saveStorage(id, nama, email, noHP, alamat){
+            let item = {
+                id, nama, email, noHP, alamat
+            }
+            let data = getData();
+            data.push(item);
+            localStorage.setItem('data', JSON.stringify(data));
+            getData()
+        }
+
+        function getData() {
+            if(localStorage.getItem('data')!=null){
+                let data = JSON.parse(localStorage.getItem('data'));
+                let html = "";
+                data.map((alias,index) => {
+                    let i = index+1;
+                    html += "<tr id='row-"+alias.id+"'><td>"+i+"</td><td>"+alias.nama+"</td><td>"+alias.email+"</td><td>"+alias.noHP+"</td><td>"+alias.alamat+"</td><td><button onclick='remove("+alias.id+")' type='button'>X</button?</td></tr>"
+                })
+                document.getElementById("tableBody").innerHTML = html;
+                return data
+            }else{
+                return []
+            }
+        }
+
+        function remove(id) {
+            document.getElementById("row-"+id).remove();
+            let data = JSON.parse(localStorage.getItem('data'));
+            data.splice((id-1),1)
+            localStorage.setItem('data', JSON.stringify(data));
+            getData()
+        }
+    </script>
+
+</body>
+</html>
